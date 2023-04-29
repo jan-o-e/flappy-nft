@@ -1,9 +1,12 @@
+import { Button } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react"
+import { useAccount } from "wagmi";
 
 export default function Home() {
 
   const [score, setScore] = useState(0);
+  const {address, connector, isConnected} = useAccount();
 
   useEffect(() => {
     let score = localStorage.getItem("FlappyBirdBestScore")
@@ -11,6 +14,10 @@ export default function Home() {
       setScore(score);
     }
   }, [])
+
+  const handleMint = async () => {
+    // TODO: Handle mint
+  }
 
   return (
     <div>
@@ -21,7 +28,13 @@ export default function Home() {
         Mint your prize!
       </div>
       <div className="flex justify-center">
-        <ConnectButton />
+        {(isConnected) ? (
+          <Button onClick={handleMint}>
+            Mint!
+          </Button>
+        ) : (
+          <ConnectButton />
+        )}
       </div>
     </div>
   )
