@@ -54,8 +54,9 @@ async function uploadToIPFS(metadata) {
 }
 
 
-//Configure the provider and signer
-// Create a JsonRpcProvider instance
+const { JsonRpcProvider, Signer } = require("@ethersproject/providers");
+const ethers = require("ethers");
+require("dotenv").config();
 const rpcUrl = "https://rpc.testnet.mantle.xyz";
 const chainId = 5001;
 const provider = new JsonRpcProvider(rpcUrl, chainId);
@@ -64,26 +65,9 @@ const provider = new JsonRpcProvider(rpcUrl, chainId);
 const privateKey = process.env.PRIV_KEY;
 const signer = new ethers.Wallet(privateKey, provider);
 
-// Get contract ABI and address
-const abi = require("contracts/mintFlappy.sol").abi;
-const contractAddress = process.env.contractAddress
-
-// Create a contract instance
-const myNftContract = new ethers.Contract(contractAddress, abi, signer);
-
 
 // Call mintNFT function
-  async function mintNFT(ipfs_hash) {
-    const { JsonRpcProvider, Signer } = require("@ethersproject/providers");
-    const ethers = require("ethers");
-    require("dotenv").config();
-    const rpcUrl = "https://rpc.testnet.mantle.xyz";
-    const chainId = 5001;
-    const provider = new JsonRpcProvider(rpcUrl, chainId);
-
-    // Create a signer using the private key from the environment variable
-    const privateKey = process.env.PRIV_KEY;
-    const signer = new ethers.Wallet(privateKey, provider);
+  async function mintNFT(ipfs_hash, signer) {
 
     // Get contract ABI and address
     const abi = require("contracts/mintFlappy.sol").abi;
@@ -99,4 +83,4 @@ const myNftContract = new ethers.Contract(contractAddress, abi, signer);
     return(`https://explorer.testnet.mantle.xyz/tx/${nftTxn.hash}`);
   }
 
-export{uploadToIPFS, generateNFTMetadata, mintNFT}
+export{uploadToIPFS, generateNFTMetadata}

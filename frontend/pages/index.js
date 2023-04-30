@@ -2,8 +2,10 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
+import { ethers } from "ethers";
 import { useEffect, useState } from "react"
-import { useAccount } from "wagmi";
+import { useAccount, useSigner, useContract, useProvider } from "wagmi";
+import {uploadToIPFS, generateNFTMetadata} from 'scripts/mint-nft.js';
 
 export default function Home() {
 
@@ -19,9 +21,42 @@ export default function Home() {
     }
   }, [])
 
+  //this function needs some work so things happen in the right order and callbacks/errors are handled correctly
   const handleMint = async () => {
-    // TODO: Handle mint
+    const [signer, setSigner] = useState(null);
+    const [contract, setContract] = useState(null);
+    const [hash, setHash] = useState(null);
+  
+    useEffect(() => {
+      async function init() {
+        const signer = useSigner({
+          chainId: 5001, //mantle test-net chainID
+        })
+        setSigner(signer);
+
+        const contractAddress = "0x72A0A69D06738D4692e9D1D1887F96351719faFC";
+        const contractABI = require("contracts/mintFlappy.sol").abi;;
+        const myNFT = new ethers.Contract(contractAddress, contractABI, signer);
+        setContract(myNFT);
+
+        const metadata = await generateNFTMetadata(score, JSON.stringify(address));
+        const ipfs_hash = await uploadToIPFS(metadata);
+        setHash(ipfs_hash);
+      
+      }
+      init();
+    }, []);
+  
+    async function mintMyNFT() {
+      if (!contract) return;
+      const tokenUri = `https://gateway.pinata.cloud/ipfs/${ipfs_hash}`;
+      let nftTxn = await myNftContract.mintNFT(signer.address, tokenUri);
+      console.log(`NFT Minted! Check it out at: https://explorer.testnet.mantle.xyz/tx/${nftTxn.hash}`);
+    }
+  
+    return (mintMyNFT);
   }
+  
 
   return (
     <>

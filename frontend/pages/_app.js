@@ -11,8 +11,30 @@ import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
+const mantletestnet = {
+  id: 5001,
+  name: 'Mantle Testnet',
+  network: 'Mantle Testnet',
+  iconUrl: 'https://i.imgur.com/Q3oIdip.png',
+  iconBackground: '#fff',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'BIT',
+    symbol: 'BIT',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.testnet.mantle.xyz'],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'Mantle Testnet Explorer', url: 'https://explorer.testnet.mantle.xyz' },
+  },
+  testnet: true,
+};
+
 const { chains, provider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum],
+  [mantletestnet, mainnet, polygon, optimism, arbitrum],
   [
     alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
@@ -28,6 +50,7 @@ const wagmiClient = createClient({
   connectors,
   provider
 })
+
 
 export default function App({ Component, pageProps }) {
   return (
