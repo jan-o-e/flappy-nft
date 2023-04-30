@@ -14,9 +14,7 @@ export default function Home() {
   const [txnHash, setTxnHash] = useState('');
   const [mintSuccess, setMintSuccess] = useState(false);
 
-  const {data: signer} = useSigner({
-    chainId: 5001, //mantle test-net chainID
-  })
+  const { data: signer, isError, isLoading } = useSigner()
   const contractAddress = "0x72A0A69D06738D4692e9D1D1887F96351719faFC";
   const contractABI = [
     {
@@ -506,7 +504,7 @@ export default function Home() {
     async function mintMyNFT() {
       if (!myNftContract) return;
       let tokenUri = `https://gateway.pinata.cloud/ipfs/${ipfs_hash}`;
-      let nftTxn = await myNftContract.mintNFT(signer.address, tokenUri);
+      let nftTxn = await myNftContract.mintNFT(address, tokenUri);
       setTxnHash(nftTxn.hash);
       setMintSuccess(true);
       console.log(`NFT Minted! Check it out at: https://explorer.testnet.mantle.xyz/tx/${nftTxn.hash}`);
