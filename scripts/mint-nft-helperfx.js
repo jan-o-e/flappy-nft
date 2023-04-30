@@ -32,7 +32,7 @@ async function uploadToIPFS(metadata) {
   const axios = require('axios');
   const pinataBaseURL = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
   const pinataApiKey = '9246be92fe1de2189acc';
-  const pinataSecretApiKey = process.env.pinataSecretApiKey;
+  const pinataSecretApiKey = 'ff616d3598d0b0e2a778b5e57e9b6b3502e8a4cb4f7721657f233a229ab9ca13';
   const nftMeta = JSON.stringify(metadata);
   const res = await axios.post(
     pinataBaseURL,
@@ -54,22 +54,20 @@ async function uploadToIPFS(metadata) {
 }
 
 
-const { JsonRpcProvider, Signer } = require("@ethersproject/providers");
-const ethers = require("ethers");
-require("dotenv").config();
-const rpcUrl = "https://rpc.testnet.mantle.xyz";
-const chainId = 5001;
-const provider = new JsonRpcProvider(rpcUrl, chainId);
-
-// Create a signer using the private key from the environment variable
-const privateKey = process.env.PRIV_KEY;
-const signer = new ethers.Wallet(privateKey, provider);
-
 
 // Call mintNFT function
   async function mintNFT(ipfs_hash, signer) {
+    const { JsonRpcProvider, Signer } = require("@ethersproject/providers");
+    const ethers = require("ethers");
+    require("dotenv").config();
+    const rpcUrl = "https://rpc.testnet.mantle.xyz";
+    const chainId = 5001;
+    const provider = new JsonRpcProvider(rpcUrl, chainId);
 
-    // Get contract ABI and address
+    // Create a signer using the private key from the environment variable
+    const privateKey = process.env.PRIV_KEY;
+    const signer = new ethers.Wallet(privateKey, provider);
+        // Get contract ABI and address
     const abi = require("contracts/mintFlappy.sol").abi;
     const contractAddress = process.env.contractAddress
 

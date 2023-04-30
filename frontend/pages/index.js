@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react"
 import { useAccount, useSigner, useContract, useProvider } from "wagmi";
-import {uploadToIPFS, generateNFTMetadata} from 'scripts/mint-nft.js';
 
 export default function Home() {
 
@@ -26,6 +25,55 @@ export default function Home() {
     const [signer, setSigner] = useState(null);
     const [contract, setContract] = useState(null);
     const [hash, setHash] = useState(null);
+
+    //create ipfs instance and upload via pinata
+  
+    function generateNFTMetadata(score, playerName) {
+      const metadata = {
+        name: `${playerName}'s Flappy Score`,
+        description: `A score of ${score} achieved by ${playerName} at ${new Date().toLocaleString()}.`,
+        image: ``,
+        attributes: [
+          {
+            trait_type: "Score",
+            value: score,
+          },
+          {
+            trait_type: "Player",
+            value: playerName,
+          },
+          {
+            trait_type: "Time",
+            value: new Date().toLocaleString(),
+          },
+        ],
+      };
+      return metadata;
+    }
+    async function uploadToIPFS(metadata) {
+      const axios = require('axios');
+      const pinataBaseURL = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
+      const pinataApiKey = '9246be92fe1de2189acc';
+      const pinataSecretApiKey = 'ff616d3598d0b0e2a778b5e57e9b6b3502e8a4cb4f7721657f233a229ab9ca13';
+      const nftMeta = JSON.stringify(metadata);
+      const res = await axios.post(
+        pinataBaseURL,
+        {
+          pinataMetadata: {
+            name: "flappy",
+          },
+          // assuming client sends `nftMeta` json
+          pinataContent: nftMeta,
+        },
+        {
+          headers: {
+            pinata_api_key: pinataApiKey,
+            pinata_secret_api_key: pinataSecretApiKey,
+          },
+        }
+      );
+      return res.data.IpfsHash;
+    }
   
     useEffect(() => {
       async function init() {
